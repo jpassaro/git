@@ -768,6 +768,9 @@ struct format_commit_context {
 	unsigned commit_header_parsed:1;
 	unsigned commit_message_parsed:1;
 	struct signature_check signature_check;
+	unsigned signature_checked:2;
+	struct strbuf signature;
+	struct strbuf signature_payload;
 	enum flush_type flush_type;
 	enum trunc_type truncate;
 	const char *message;
@@ -1228,8 +1231,30 @@ static size_t format_commit_one(struct strbuf *sb, /* in UTF-8 */
 	}
 
 	if (placeholder[0] == 'G') {
-		if (!c->signature_check.result)
-			check_commit_signature(c->commit, &(c->signature_check));
+		if (!c->signature_checked) {
+			parse_signed_commit(c->commit, &(c->signature_payload), &(c->signature));
+			c->signature_checked = 1;
+		}
+		switch (placeholder[1]) {
+		case 'R':
+			strbuf_addbuf(sb, &(c->signature));
+			break;
+		case '+':
+			strbuf_addch(sb, c->signature.len ? 'Y' : 'N');
+			break;
+		default:
+			goto do_signature_check;
+		}
+		return 2;
+
+do_signature_check:
+		if (c->signature_checked < 2) {
+			if (c->signature.len)
+				check_signature(c->signature_payload.buf, c->signature_payload.len,
+						c->signature.buf, c->signature.len,
+						&(c->signature_check));
+			c->signature_checked = 2;
+		}
 		switch (placeholder[1]) {
 		case 'G':
 			if (c->signature_check.gpg_output)
@@ -1246,6 +1271,9 @@ static size_t format_commit_one(struct strbuf *sb, /* in UTF-8 */
 			case 'Y':
 			case 'R':
 				strbuf_addch(sb, c->signature_check.result);
+				break;
+			case 0: // i.e. no signature so we never ran the check
+				strbuf_addch(sb, 'N');
 			}
 			break;
 		case 'S':
@@ -1527,6 +1555,8 @@ void format_commit_message(const struct commit *commit,
 	context.commit = commit;
 	context.pretty_ctx = pretty_ctx;
 	context.wrap_start = sb->len;
+	strbuf_init(&context.signature, 0);
+	strbuf_init(&context.signature_payload, 0);
 	/*
 	 * convert a commit message to UTF-8 first
 	 * as far as 'format_commit_item' assumes it in UTF-8
@@ -1556,6 +1586,8 @@ void format_commit_message(const struct commit *commit,
 			strbuf_attach(sb, out, outsz, outsz + 1);
 	}
 
+	strbuf_release(&context.signature);
+	strbuf_release(&context.signature_payload);
 	free(context.commit_encoding);
 	unuse_commit_buffer(commit, context.message);
 }
