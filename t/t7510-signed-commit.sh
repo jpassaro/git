@@ -170,6 +170,48 @@ test_expect_success GPG 'amending already signed commit' '
 	! grep "BAD signature from" actual
 '
 
+test_expect_success GPG 'show custom format fields for signed commit if gpg is missing' '
+	cat >expect <<-\EOF &&
+	N
+
+
+
+
+	Y
+	EOF
+	test_config gpg.program this-is-not-a-program &&
+	git log -n1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" sixth-signed >actual 2>/dev/null &&
+	test_cmp expect actual
+'
+
+test_expect_success GPG 'show custom format fields for unsigned commit if gpg is missing' '
+	cat >expect <<-\EOF &&
+	N
+
+
+
+
+	N
+	EOF
+	test_config gpg.program this-is-not-a-program &&
+	git log -n1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" seventh-unsigned >actual 2>/dev/null &&
+	test_cmp expect actual
+'
+
+test_expect_success GPG 'show error for custom format fields on signed commit if gpg is missing' '
+	test_config gpg.program this-is-not-a-program &&
+	git log -n1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" sixth-signed >/dev/null 2>errors &&
+	test $(wc -l <errors) = 1 &&
+	test_i18ngrep "^error: " errors &&
+	grep this-is-not-a-program errors
+'
+
+test_expect_success GPG 'do not run gpg at all for unsigned commit' '
+	test_config gpg.program this-is-not-a-program &&
+	git log -n1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" seventh-unsigned >/dev/null 2>errors &&
+	test_must_be_empty errors
+'
+
 test_expect_success GPG 'show good signature with custom format' '
 	cat >expect <<-\EOF &&
 	G
@@ -240,6 +282,14 @@ test_expect_success GPG 'show lack of raw signature with custom format' '
 	test_must_be_empty actual
 '
 
+test_expect_success GPG 'show lack of raw signature with custom format without running GPG' '
+	echo N > expected &&
+	test_config gpg.program this-is-not-a-program &&
+	git log -1 --format="%G+%GR" seventh-unsigned >actual 2>errors &&
+	test_cmp expected actual &&
+	test_must_be_empty errors
+'
+
 test_expect_success GPG 'show raw signature with custom format' '
 	git log -1 --format=format:"%GR" sixth-signed >output &&
 	cat output &&
@@ -248,6 +298,51 @@ test_expect_success GPG 'show raw signature with custom format' '
 	sed "1,/^$/d" output | grep -q "^[a-zA-Z0-9+/][a-zA-Z0-9+/=]*$" &&
 	tail -n2 output | head -n1 | grep -q "^=[a-zA-Z0-9+/][a-zA-Z0-9+/=]*$" &&
 	tail -n1 output | grep -q "^---*END PGP SIGNATURE---*$"
+'
+
+test_expect_success GPG 'show raw signature with custom format without running GPG' '
+	test_config gpg.program this-is-not-a-program &&
+	git log -1 --format=format:"%GR" sixth-signed >rawsig 2>errors &&
+	cat rawsig &&
+	head -n1 rawsig | grep -q "^---*BEGIN PGP SIGNATURE---*$" &&
+	sed 1d rawsig | grep -q "^$" &&
+	sed "1,/^$/d" rawsig | grep -q "^[a-zA-Z0-9+/][a-zA-Z0-9+/=]*$" &&
+	tail -n2 rawsig | head -n1 | grep -q "^=[a-zA-Z0-9+/][a-zA-Z0-9+/=]*$" &&
+	tail -n1 rawsig | grep -q "^---*END PGP SIGNATURE---*$" &&
+	test_must_be_empty errors
+'
+
+test_expect_success GPG 'show presence of gpgsig with custom format when gpg is missing without errors' '
+	echo Y > expected &&
+	git log -1 --format=%G+ sixth-signed >output 2>errors &&
+	test_cmp expected output &&
+	test_must_be_empty errors
+'
+
+test_expect_success GPG 'show presence of invalid gpgsig header' '
+	printf gpgsig >gpgsig-header &&
+	tee prank-signature <<-\EOF | sed "s/^/ /" >>gpgsig-header &&
+	this is not a signature but an awful...
+					   888
+					   888
+					   888
+	88888b.  888d888  8888b.  88888b.  888  888
+	888 "88b 888P"       "88b 888 "88b 888 .88P
+	888  888 888     .d888888 888  888 888888K
+	888 d88P 888     888  888 888  888 888 "88b
+	88888P"  888     "Y888888 888  888 888  888
+	888
+	888
+	888
+	EOF
+	git cat-file commit seventh-unsigned >bare-commit-data &&
+	sed "/^committer/r gpgsig-header" bare-commit-data >commit-data &&
+	git hash-object -w -t commit commit-data >commit &&
+	echo Y >expected &&
+	cat prank-signature >>expected &&
+	git log -n1 --format=format:%G+%n%GR $(cat commit) >actual 2>errors &&
+	test_cmp expected actual &&
+	test_must_be_empty errors
 '
 
 test_expect_success GPG 'log.showsignature behaves like --show-signature' '
