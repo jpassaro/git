@@ -198,16 +198,17 @@ endif::git-rev-list[]
 	%GR/%G+/%G?) return blank if GPG cannot be run.
 '%G?':: "G" for a good (valid) signature,
 	"B" for a bad signature,
-	"U" for a good signature with unknown validity,
+	"U" for a good signature with unknown validity (e.g. untrusted
+	key),
 	"X" for a good signature that has expired,
 	"Y" for a good signature made by an expired key,
 	"R" for a good signature made by a revoked key,
 	"E" if the signature cannot be checked (e.g. missing key)
 	and "N" for no signature (including when GPG cannot be run)
-'%GS':: show the name of the signer for a signed commit
-'%GK':: show the key used to sign a signed commit
-'%GF':: show the fingerprint of the key used to sign a signed commit
-'%GP':: show the fingerprint of the primary key whose subkey was used
+'%GS':: name of the signer for a signed commit
+'%GK':: key used to sign a signed commit
+'%GF':: fingerprint of the key used to sign a signed commit
+'%GP':: fingerprint of the primary key whose subkey was used
 	to sign a signed commit
 '%gD':: reflog selector, e.g., `refs/stash@{1}` or `refs/stash@{2
 	minutes ago`}; the format follows the rules described for the
