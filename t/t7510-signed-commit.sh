@@ -177,8 +177,9 @@ test_expect_success GPG 'show good signature with custom format' '
 	C O Mitter <committer@example.com>
 	73D758744BE721698EC54E8713B6F51ECDDE430D
 	73D758744BE721698EC54E8713B6F51ECDDE430D
+	Y
 	EOF
-	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP" sixth-signed >actual &&
+	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" sixth-signed >actual &&
 	test_cmp expect actual
 '
 
@@ -189,8 +190,9 @@ test_expect_success GPG 'show bad signature with custom format' '
 	C O Mitter <committer@example.com>
 
 
+	Y
 	EOF
-	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP" $(cat forged1.commit) >actual &&
+	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" $(cat forged1.commit) >actual &&
 	test_cmp expect actual
 '
 
@@ -201,8 +203,9 @@ test_expect_success GPG 'show untrusted signature with custom format' '
 	Eris Discordia <discord@example.net>
 	F8364A59E07FFE9F4D63005A65A0EEA02E30CAD7
 	D4BE22311AD3131E5EDA29A461092E85B7227189
+	Y
 	EOF
-	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP" eighth-signed-alt >actual &&
+	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" eighth-signed-alt >actual &&
 	test_cmp expect actual
 '
 
@@ -213,8 +216,9 @@ test_expect_success GPG 'show unknown signature with custom format' '
 
 
 
+	Y
 	EOF
-	GNUPGHOME="$GNUPGHOME_NOT_USED" git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP" eighth-signed-alt >actual &&
+	GNUPGHOME="$GNUPGHOME_NOT_USED" git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" eighth-signed-alt >actual &&
 	test_cmp expect actual
 '
 
@@ -225,9 +229,25 @@ test_expect_success GPG 'show lack of signature with custom format' '
 
 
 
+	N
 	EOF
-	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP" seventh-unsigned >actual &&
+	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" seventh-unsigned >actual &&
 	test_cmp expect actual
+'
+
+test_expect_success GPG 'show lack of raw signature with custom format' '
+	git log -1 --format=format:"%GR" seventh-unsigned > actual &&
+	test_must_be_empty actual
+'
+
+test_expect_success GPG 'show raw signature with custom format' '
+	git log -1 --format=format:"%GR" sixth-signed >output &&
+	cat output &&
+	head -n1 output | grep -q "^---*BEGIN PGP SIGNATURE---*$" &&
+	sed 1d output | grep -q "^$" &&
+	sed "1,/^$/d" output | grep -q "^[a-zA-Z0-9+/][a-zA-Z0-9+/=]*$" &&
+	tail -n2 output | head -n1 | grep -q "^=[a-zA-Z0-9+/][a-zA-Z0-9+/=]*$" &&
+	tail -n1 output | grep -q "^---*END PGP SIGNATURE---*$"
 '
 
 test_expect_success GPG 'log.showsignature behaves like --show-signature' '
