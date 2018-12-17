@@ -142,11 +142,13 @@ The placeholders are:
 ifndef::git-rev-list[]
 - '%N': commit notes
 endif::git-rev-list[]
-- '%GR': contents of the commits signature (blank when unsigned)
-- '%G+': "Y" if the commit is signed, "N" otherwise
+- '%Gs': contents of the commit's signature (blank when unsigned)
+- '%Gp': the commit payload used to compute the signature (blank
+  when unsigned)
+- '%Gq': "Y" if the commit is signed, "N" otherwise
 - '%GG': raw verification message from GPG for a signed commit.
-  This and all the other %G* placeholders, other than %GR, %G+, and
-  %G?, return blank if GPG cannot be run.
+  This and all the other %G* placeholders, other than %Gs, %Gp, %Gq,
+  and %G?, return blank if GPG cannot be run.
 - '%G?': "G" for a good (valid) signature,
   "B" for a bad signature,
   "U" for a good signature with unknown validity (e.g. key is known but

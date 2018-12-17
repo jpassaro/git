@@ -768,7 +768,8 @@ struct format_commit_context {
 	unsigned commit_header_parsed:1;
 	unsigned commit_message_parsed:1;
 	struct signature_check signature_check;
-	unsigned signature_checked:2;
+	unsigned signature_parsed:1;
+	unsigned signature_verified:1;
 	struct strbuf signature;
 	struct strbuf signature_payload;
 	enum flush_type flush_type;
@@ -1231,15 +1232,19 @@ static size_t format_commit_one(struct strbuf *sb, /* in UTF-8 */
 	}
 
 	if (placeholder[0] == 'G') {
-		if (!c->signature_checked) {
+		if (!c->signature_parsed) {
 			parse_signed_commit(c->commit, &(c->signature_payload), &(c->signature));
-			c->signature_checked = 1;
+			c->signature_parsed = 1;
 		}
 		switch (placeholder[1]) {
-		case 'R':
+		case 'p':
+			if (c->signature.len)
+				strbuf_addbuf(sb, &(c->signature_payload));
+			break;
+		case 's':
 			strbuf_addbuf(sb, &(c->signature));
 			break;
-		case '+':
+		case 'q':
 			strbuf_addch(sb, c->signature.len ? 'Y' : 'N');
 			break;
 		default:
@@ -1248,12 +1253,12 @@ static size_t format_commit_one(struct strbuf *sb, /* in UTF-8 */
 		return 2;
 
 do_signature_check:
-		if (c->signature_checked < 2) {
+		if (!c->signature_verified) {
 			if (c->signature.len)
 				check_signature(c->signature_payload.buf, c->signature_payload.len,
 						c->signature.buf, c->signature.len,
 						&(c->signature_check));
-			c->signature_checked = 2;
+			c->signature_verified = 1;
 		}
 		switch (placeholder[1]) {
 		case 'G':

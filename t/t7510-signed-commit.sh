@@ -180,7 +180,7 @@ test_expect_success GPG 'show custom format fields for signed commit if gpg is m
 	Y
 	EOF
 	test_config gpg.program this-is-not-a-program &&
-	git log -n1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" sixth-signed >actual 2>/dev/null &&
+	git log -n1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%Gq" sixth-signed >actual 2>/dev/null &&
 	test_cmp expect actual
 '
 
@@ -194,13 +194,13 @@ test_expect_success GPG 'show custom format fields for unsigned commit if gpg is
 	N
 	EOF
 	test_config gpg.program this-is-not-a-program &&
-	git log -n1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" seventh-unsigned >actual 2>/dev/null &&
+	git log -n1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%Gq" seventh-unsigned >actual 2>/dev/null &&
 	test_cmp expect actual
 '
 
 test_expect_success GPG 'show error for custom format fields on signed commit if gpg is missing' '
 	test_config gpg.program this-is-not-a-program &&
-	git log -n1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" sixth-signed >/dev/null 2>errors &&
+	git log -n1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%Gq" sixth-signed >/dev/null 2>errors &&
 	test $(wc -l <errors) = 1 &&
 	test_i18ngrep "^error: " errors &&
 	grep this-is-not-a-program errors
@@ -208,7 +208,7 @@ test_expect_success GPG 'show error for custom format fields on signed commit if
 
 test_expect_success GPG 'do not run gpg at all for unsigned commit' '
 	test_config gpg.program this-is-not-a-program &&
-	git log -n1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" seventh-unsigned >/dev/null 2>errors &&
+	git log -n1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%Gq" seventh-unsigned >/dev/null 2>errors &&
 	test_must_be_empty errors
 '
 
@@ -221,7 +221,7 @@ test_expect_success GPG 'show good signature with custom format' '
 	73D758744BE721698EC54E8713B6F51ECDDE430D
 	Y
 	EOF
-	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" sixth-signed >actual &&
+	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%Gq" sixth-signed >actual &&
 	test_cmp expect actual
 '
 
@@ -234,7 +234,7 @@ test_expect_success GPG 'show bad signature with custom format' '
 
 	Y
 	EOF
-	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" $(cat forged1.commit) >actual &&
+	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%Gq" $(cat forged1.commit) >actual &&
 	test_cmp expect actual
 '
 
@@ -247,7 +247,7 @@ test_expect_success GPG 'show untrusted signature with custom format' '
 	D4BE22311AD3131E5EDA29A461092E85B7227189
 	Y
 	EOF
-	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" eighth-signed-alt >actual &&
+	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%Gq" eighth-signed-alt >actual &&
 	test_cmp expect actual
 '
 
@@ -260,7 +260,7 @@ test_expect_success GPG 'show unknown signature with custom format' '
 
 	Y
 	EOF
-	GNUPGHOME="$GNUPGHOME_NOT_USED" git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" eighth-signed-alt >actual &&
+	GNUPGHOME="$GNUPGHOME_NOT_USED" git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%Gq" eighth-signed-alt >actual &&
 	test_cmp expect actual
 '
 
@@ -273,25 +273,25 @@ test_expect_success GPG 'show lack of signature with custom format' '
 
 	N
 	EOF
-	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%G+" seventh-unsigned >actual &&
+	git log -1 --format="%G?%n%GK%n%GS%n%GF%n%GP%n%Gq" seventh-unsigned >actual &&
 	test_cmp expect actual
 '
 
-test_expect_success GPG 'show lack of raw signature with custom format' '
-	git log -1 --format=format:"%GR" seventh-unsigned > actual &&
+test_expect_success GPG 'show lack of raw signature and payload with custom format' '
+	git log -1 --format=format:"%Gs%Gp" seventh-unsigned > actual &&
 	test_must_be_empty actual
 '
 
 test_expect_success GPG 'show lack of raw signature with custom format without running GPG' '
 	echo N > expected &&
 	test_config gpg.program this-is-not-a-program &&
-	git log -1 --format="%G+%GR" seventh-unsigned >actual 2>errors &&
+	git log -1 --format="%Gq%Gs%Gp" seventh-unsigned >actual 2>errors &&
 	test_cmp expected actual &&
 	test_must_be_empty errors
 '
 
 test_expect_success GPG 'show raw signature with custom format' '
-	git log -1 --format=format:"%GR" sixth-signed >output &&
+	git log -1 --format=format:"%Gs" sixth-signed >output &&
 	cat output &&
 	head -n1 output | grep -q "^---*BEGIN PGP SIGNATURE---*$" &&
 	sed 1d output | grep -q "^$" &&
@@ -300,9 +300,28 @@ test_expect_success GPG 'show raw signature with custom format' '
 	tail -n1 output | grep -q "^---*END PGP SIGNATURE---*$"
 '
 
+test_expect_success GPG 'show raw signature payload with custom format' '
+	git log -1 --format="tree %T%nparent %P%nauthor %an <%ae> %ad%ncommitter %cn <%ce> %cd%n%n%B" --date=raw sixth-signed >expect &&
+	git log -1 --format=%Gp sixth-signed >actual &&
+	test_cmp expect actual
+'
+
+# for some reason it seems to be impossible to get this into a cleartext
+# OpenPGP-format message
+test_expect_failure GPG 'cleartext signed message with payload and signature passes verification' '
+	git log -1 --format="-----BEGIN PGP SIGNED MESSAGE-----%n%n%Gp%Gs" > commit-as-signed-message &&
+	gpg --verify commit-as-signed-message
+'
+
+test_expect_success GPG 'verify detached signature outside of git' '
+	git log -1 --format=format:%Gp sixth-signed >payload &&
+	git log -1 --format=format:%Gs sixth-signed >signature &&
+	gpg --verify signature payload
+'
+
 test_expect_success GPG 'show raw signature with custom format without running GPG' '
 	test_config gpg.program this-is-not-a-program &&
-	git log -1 --format=format:"%GR" sixth-signed >rawsig 2>errors &&
+	git log -1 --format=format:"%Gs" sixth-signed >rawsig 2>errors &&
 	cat rawsig &&
 	head -n1 rawsig | grep -q "^---*BEGIN PGP SIGNATURE---*$" &&
 	sed 1d rawsig | grep -q "^$" &&
@@ -314,7 +333,7 @@ test_expect_success GPG 'show raw signature with custom format without running G
 
 test_expect_success GPG 'show presence of gpgsig with custom format when gpg is missing without errors' '
 	echo Y > expected &&
-	git log -1 --format=%G+ sixth-signed >output 2>errors &&
+	git log -1 --format=%Gq sixth-signed >output 2>errors &&
 	test_cmp expected output &&
 	test_must_be_empty errors
 '
@@ -340,7 +359,7 @@ test_expect_success GPG 'show presence of invalid gpgsig header' '
 	git hash-object -w -t commit commit-data >commit &&
 	echo Y >expected &&
 	cat prank-signature >>expected &&
-	git log -n1 --format=format:%G+%n%GR $(cat commit) >actual 2>errors &&
+	git log -n1 --format=format:%Gq%n%Gs $(cat commit) >actual 2>errors &&
 	test_cmp expected actual &&
 	test_must_be_empty errors
 '
