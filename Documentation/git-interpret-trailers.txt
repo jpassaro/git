@@ -94,6 +94,9 @@ The group must either be at the end of the input or be the last
 non-whitespace lines before a line that starts with '---' (followed by a
 space or the end of the line).
 
+When reading trailers, the output can be filtered by using `--only-trailers`
+and `--trailer` together, or `--parse` and `--trailer`.
+
 When reading trailers, there can be no whitespace before or inside the
 <key>, but any number of regular space and tab characters are allowed
 between the <key> and the separator. There can be whitespaces before,
@@ -121,8 +124,8 @@ OPTIONS
 
 --trailer <key>[(=|:)<value>]::
 	Specify a (<key>, <value>) pair that should be applied as a
-	trailer to the inputs. See the description of this
-	command.
+	trailer to the inputs; or, when parsing, filter for only the
+	given key. See the description of this command.
 
 --where <placement>::
 --no-where::
@@ -182,6 +185,11 @@ OPTIONS
 	Do not treat `---` as the end of the commit message. Use this
 	when you know your input contains just the commit message itself
 	(and not an email or the output of `git format-patch`).
+
+--only-value::
+	With --parse, omit the trailer key and output only the value.
+	Also valid with --only-input and --only-trailers.
+	Best used with `--trailer` (for filtering).
 
 CONFIGURATION VARIABLES
 -----------------------

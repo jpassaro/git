@@ -1949,4 +1949,28 @@ test_expect_success 'handling of --- lines in conjunction with cut-lines' '
 	test_cmp expected actual
 '
 
+test_expect_success 'filter trailer with --parse' '
+    echo "my-trailer: here" >expected &&
+	git interpret-trailers --parse --trailer "my-trailer" >actual <<-\EOF &&
+	subject
+
+	my-trailer: here
+	other-trailer: there
+	EOF
+
+	test_cmp expected actual
+'
+
+test_expect_success 'filter trailer with --parse and --only-value' '
+    echo "here" >expected &&
+	git interpret-trailers --parse --only-value --trailer "my-trailer" >actual <<-\EOF &&
+	subject
+
+	my-trailer: here
+	other-trailer: there
+	EOF
+
+	test_cmp expected actual
+'
+
 test_done
