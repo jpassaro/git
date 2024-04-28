@@ -12682,10 +12682,12 @@ msgstr "razón de la actualización"
 
 msgid ""
 "git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>]\n"
-"        <tagname> [<head>]"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
+"        <tagname> [<commit> | <object>]"
 msgstr ""
-"git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>]\n"
-"        <tagname> [<head>]"
+"git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <archivo>]\n"
+"        [(--trailer <token>[(=|:)<valor>])...]\n"
+"        <nombre-de-tag> [<commit> | <objeto>]"
 
 msgid "git tag -d <tagname>..."
 msgstr "git tag -d <nombre-de-tag>..."
@@ -12697,8 +12699,8 @@ msgid ""
 "[<pattern>...]"
 msgstr ""
 "git tag -l [-n[<num>]] [--contains <commit>] [--no-contains <commit>] [--"
-"points-at <object>]\n"
-"        [--format=<format>] [--merged <commit>] [--no-merged <commit>] "
+"points-at <objeto>]\n"
+"        [--format=<formato>] [--merged <commit>] [--no-merged <commit>] "
 "[<pattern>...]"
 
 msgid "git tag -v [--format=<format>] <tagname>..."
@@ -18461,7 +18463,7 @@ msgstr "%%(body) no toma ningún argumento"
 
 #, c-format
 msgid "expected %%(trailers:key=<value>)"
-msgstr "se esperaba %%(trailers:key=<value>)"
+msgstr "se esperaba %%(trailers:key=<valor>)"
 
 #, c-format
 msgid "unknown %%(trailers) argument: %s"

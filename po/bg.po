@@ -13532,9 +13532,11 @@ msgstr "причина за обновяването"
 
 msgid ""
 "git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>] [-e]\n"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
 "        <tagname> [<commit> | <object>]"
 msgstr ""
 "git tag [-a|-s|-u ИДЕНТИФИКАТОР_НА_КЛЮЧ] [-f] [-m СЪОБЩЕНИЕ|-F ФАЙЛ] [-e]\n"
+"        [(--trailer ЛЕКСЕМА[(=|:)СТОЙНОСТ])…]\n"
 "        ЕТИКЕТ [ПОДАВАНЕ|ОБЕКТ]"
 
 msgid "git tag -d <tagname>..."

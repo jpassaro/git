@@ -13072,10 +13072,12 @@ msgstr "причина оновлення"
 
 msgid ""
 "git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>] [-e]\n"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
 "        <tagname> [<commit> | <object>]"
 msgstr ""
 "git tag [-a | -s | -u <ідентифікатор-ключа>] [-f] [-m <допис> | -F <файл>] [-"
 "e]\n"
+"        [(--trailer <токен>[(=|:)<значення>])...]\n"
 "        <назва-тегу> [<коміт> | <об’єкт>]"
 
 msgid "git tag -d <tagname>..."

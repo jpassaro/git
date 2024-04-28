@@ -12963,10 +12963,12 @@ msgstr "güncelleme nedeni"
 
 msgid ""
 "git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>] [-e]\n"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
 "        <tagname> [<commit> | <object>]"
 msgstr ""
 "git tag [-a | -s | -u <anahtar-kimliği>] [-f] [-m <ileti> | -F <dosya>] [-"
 "e]\n"
+"        [(--trailer <jeton>[(=|:)<değer>])...]\n"
 "        <etiket-adı> [<işleme> | <nesne>]"
 
 msgid "git tag -d <tagname>..."

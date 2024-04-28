@@ -13114,10 +13114,12 @@ msgstr "raó de l'actualització"
 
 msgid ""
 "git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>] [-e]\n"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
 "        <tagname> [<commit> | <object>]"
 msgstr ""
 "git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <fitxer>] [-e]\n"
-"        <tagname> [<comissió> | <objecte>]"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
+"        <nom-d'etiqueta> [<comissió> | <objecte>]"
 
 msgid "git tag -d <tagname>..."
 msgstr "git tag -d <nom-d'etiqueta>..."

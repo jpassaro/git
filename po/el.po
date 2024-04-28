@@ -18093,11 +18093,14 @@ msgstr ""
 
 #: builtin/tag.c:25
 msgid ""
-"git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>] <tagname> "
-"[<head>]"
+"git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>]\n"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
+"        <tagname> [<commit> | <object>]"
 msgstr ""
 "git tag [-a | -s | -u <αναγνωριστικό κλειδί>] [-f] [-m <μήνυμα> | -F "
-"<αρχείο>] <όνομα ετικέτας> [<head>]"
+"<αρχείο>]\n"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
+"        <όνομα ετικέτας> [<υποβολή> | <αντικείμενο>]"
 
 #: builtin/tag.c:26
 msgid "git tag -d <tagname>..."

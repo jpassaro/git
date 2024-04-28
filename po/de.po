@@ -13283,9 +13283,11 @@ msgstr "Grund für die Aktualisierung"
 
 msgid ""
 "git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>] [-e]\n"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
 "        <tagname> [<commit> | <object>]"
 msgstr ""
 "git tag [-a | -s | -u <Key-ID>] [-f] [-m <Beschreibung> | -F <Datei>] [-e]\n"
+"        [(--trailer <Token>[(=|:)<Wert>])...]\n"
 "        <Tagname> [<Commit> | <Objekt>]"
 
 msgid "git tag -d <tagname>..."

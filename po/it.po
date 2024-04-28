@@ -22486,10 +22486,12 @@ msgstr "motivo dell'aggiornamento"
 #: builtin/tag.c:25
 msgid ""
 "git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>]\n"
-"\t\t<tagname> [<head>]"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
+"        <tagname> [<commit> | <object>]"
 msgstr ""
 "git tag [-a | -s | -u <ID chiave>] [-f] [-m <messaggio> | -F <file>]\n"
-"\t\t<nome tag> [<head>]"
+"        [(--trailer <token>[(=|:)<valore>])...]\n"
+"        <nome tag> [<commit> | <oggetto>]"
 
 #: builtin/tag.c:27
 msgid "git tag -d <tagname>..."

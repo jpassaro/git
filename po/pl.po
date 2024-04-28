@@ -23549,10 +23549,12 @@ msgstr "powód aktualizacji"
 #: builtin/tag.c:25
 msgid ""
 "git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>]\n"
-"        <tagname> [<head>]"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
+"        <tagname> [<commit> | <object>]"
 msgstr ""
 "git tag [-a | -s | -u <id-klucza>] [-f] [-m <komunikat> | -F <plik>]\n"
-"        <tag> [<czoło>]"
+"        [(--trailer <klucz>[(=|:)<wartość>])...]\n"
+"        <nazwa-tagu> [<zapis> | <obiekt>]"
 
 #: builtin/tag.c:27
 msgid "git tag -d <tagname>..."

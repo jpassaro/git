@@ -16205,9 +16205,11 @@ msgstr "alasan pembaruan"
 #: builtin/tag.c
 msgid ""
 "git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>] [-e]\n"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
 "        <tagname> [<commit> | <object>]"
 msgstr ""
 "git tag [-a | -s | -u <id kunci>] [-f] [-m <pesan> | -F <berkas>] [-e]\n"
+"        [(--trailer <token>[(=|:)<nilai>])...]\n"
 "        <nama tag> [<komit> | <objek>]"
 
 #: builtin/tag.c

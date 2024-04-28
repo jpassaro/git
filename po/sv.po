@@ -12824,9 +12824,11 @@ msgstr "skäl till uppdateringen"
 
 msgid ""
 "git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>] [-e]\n"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
 "        <tagname> [<commit> | <object>]"
 msgstr ""
 "git tag [-a | -s | -u <nyckel-id>] [-f] [-m <medd> | -F <fil>] [-e]\n"
+"        [(--trailer <symbol>[(=|:)<värde>])...]\n"
 "        <taggnamn> [<incheckning> | <objekt>]"
 
 msgid "git tag -d <tagname>..."

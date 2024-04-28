@@ -16000,9 +16000,11 @@ msgstr "更新的原因"
 #: builtin/tag.c
 msgid ""
 "git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>] [-e]\n"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
 "        <tagname> [<commit> | <object>]"
 msgstr ""
 "git tag [-a | -s | -u <私钥 ID>] [-f] [-m <消息> | -F <文件>] [-e]\n"
+"        [(--trailer <键>[(=|:)<值>])...]\n"
 "        <标签名> [<提交> | <对象>]"
 
 #: builtin/tag.c

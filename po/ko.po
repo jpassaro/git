@@ -14397,11 +14397,13 @@ msgstr "업데이트의 이유"
 
 #: builtin/tag.c:24
 msgid ""
-"git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>] <tagname> "
-"[<head>]"
+"git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>]\n"
+"        [(--trailer <token>[(=|:)<value>])...]\n"
+"        <tagname> [<commit> | <object>]"
 msgstr ""
-"git tag [-a | -s | -u <키-ID>] [-f] [-m <메시지> | -F <파일>] <태그이름>\n"
-"\t\t[<헤드>]"
+"git tag [-a | -s | -u <키-ID>] [-f] [-m <메시지> | -F <파일>]\n"
+"        [(--trailer <토큰>[(=|:)<값>])...]\n"
+"        <태그이름> [<커밋> | <오브젝트>]"
 
 #: builtin/tag.c:25
 msgid "git tag -d <tagname>..."
