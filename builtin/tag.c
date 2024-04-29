@@ -676,7 +676,7 @@ int cmd_tag(int argc, const char **argv, const char *prefix)
 	else if (!force)
 		die(_("tag '%s' already exists"), tag);
 
-	opt.message_given = msg.given || (msgfile != NULL);
+	opt.message_given = msg.given || msgfile;
 	opt.use_editor = edit_flag;
 
 	if (!cleanup_arg || !strcmp(cleanup_arg, "strip"))
