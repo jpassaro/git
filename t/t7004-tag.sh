@@ -670,15 +670,18 @@ test_expect_success \
 
 # trailers
 
-get_tag_header tag-with-inline-message-and-trailers $commit commit $time >expect
-cat >>expect <<EOF
-create tag with trailers
-
-my-trailer: here
-alt-trailer: there
-EOF
 test_expect_success 'create tag with -m and --trailer' '
-	git tag -m "create tag with trailers"  --trailer my-trailer=here --trailer alt-trailer=there tag-with-inline-message-and-trailers &&
+	get_tag_header tag-with-inline-message-and-trailers $commit commit $time >expect &&
+	cat >>expect <<-\EOF &&
+	create tag with trailers
+
+	my-trailer: here
+	alt-trailer: there
+	EOF
+	git tag -m "create tag with trailers" \
+		--trailer my-trailer=here \
+		--trailer alt-trailer=there \
+		tag-with-inline-message-and-trailers &&
 	get_tag_msg tag-with-inline-message-and-trailers >actual &&
 	test_cmp expect actual
 '
@@ -693,72 +696,79 @@ test_expect_success 'list tag extracting trailers' '
 	test_cmp expect actual
 '
 
-echo 'create tag from message file using --trailer' >messagefilewithnotrailers
-get_tag_header tag-with-file-message-and-trailers $commit commit $time >expect
-cat >>expect <<EOF
-create tag from message file using --trailer
-
-my-trailer: here
-alt-trailer: there
-EOF
 test_expect_success 'create tag with -F and --trailer' '
-	git tag -F messagefilewithnotrailers  --trailer my-trailer=here --trailer alt-trailer=there tag-with-file-message-and-trailers &&
+	echo "create tag from message file using --trailer" >messagefilewithnotrailers &&
+	get_tag_header tag-with-file-message-and-trailers $commit commit $time >expect &&
+	cat >>expect <<-\EOF &&
+	create tag from message file using --trailer
+
+	my-trailer: here
+	alt-trailer: there
+	EOF
+	git tag -F messagefilewithnotrailers \
+		--trailer my-trailer=here \
+		--trailer alt-trailer=there \
+		tag-with-file-message-and-trailers &&
 	get_tag_msg tag-with-file-message-and-trailers >actual &&
 	test_cmp expect actual
 '
 
-test_expect_success 'set up editor' '
-	write_script fakeeditor <<-\EOF
+test_expect_success 'create tag with -m and --trailer and --edit' '
+	write_script fakeeditor <<-\EOF &&
 	sed -e "1s/^/EDITED: /g" <"$1" >"$1-"
 	mv "$1-" "$1"
 	EOF
-'
+	get_tag_header tag-with-edited-inline-message-and-trailers $commit commit $time >expect &&
+	cat >>expect <<-\EOF &&
+	EDITED: create tag with trailers
 
-get_tag_header tag-with-edited-inline-message-and-trailers $commit commit $time >expect
-cat >>expect <<EOF
-EDITED: create tag with trailers
-
-my-trailer: here
-alt-trailer: there
-EOF
-test_expect_success 'create tag with -m and --trailer and --edit' '
-	GIT_EDITOR=./fakeeditor git tag --edit -m "create tag with trailers"  --trailer my-trailer=here --trailer alt-trailer=there tag-with-edited-inline-message-and-trailers &&
+	my-trailer: here
+	alt-trailer: there
+	EOF
+	GIT_EDITOR=./fakeeditor git tag --edit \
+		-m "create tag with trailers" \
+		--trailer my-trailer=here \
+		--trailer alt-trailer=there \
+		tag-with-edited-inline-message-and-trailers &&
 	get_tag_msg tag-with-edited-inline-message-and-trailers >actual &&
 	test_cmp expect actual
 '
 
-echo 'create tag from message file using --trailer' >messagefilewithnotrailers
-get_tag_header tag-with-edited-file-message-and-trailers $commit commit $time >expect
-cat >>expect <<EOF
-EDITED: create tag from message file using --trailer
-
-my-trailer: here
-alt-trailer: there
-EOF
 test_expect_success 'create tag with -F and --trailer and --edit' '
-	GIT_EDITOR=./fakeeditor git tag --edit -F messagefilewithnotrailers  --trailer my-trailer=here --trailer alt-trailer=there tag-with-edited-file-message-and-trailers &&
+	echo "create tag from message file using --trailer" >messagefilewithnotrailers &&
+	get_tag_header tag-with-edited-file-message-and-trailers $commit commit $time >expect &&
+	cat >>expect <<-\EOF &&
+	EDITED: create tag from message file using --trailer
+
+	my-trailer: here
+	alt-trailer: there
+	EOF
+	GIT_EDITOR=./fakeeditor git tag --edit \
+		-F messagefilewithnotrailers \
+		--trailer my-trailer=here \
+		--trailer alt-trailer=there \
+		tag-with-edited-file-message-and-trailers &&
 	get_tag_msg tag-with-edited-file-message-and-trailers >actual &&
 	test_cmp expect actual
 '
 
-test_expect_success 'set up editor' '
-	write_script fakeeditor <<-\EOF
+test_expect_success 'create annotated tag and force editor when only --trailer is given' '
+	write_script fakeeditor <<-\EOF &&
 	echo "add a line" >"$1-"
-	echo >>"$1-"
 	cat <"$1" >>"$1-"
 	mv "$1-" "$1"
 	EOF
-'
+	get_tag_header tag-with-trailers-and-no-message $commit commit $time >expect &&
+	cat >>expect <<-\EOF &&
+	add a line
 
-get_tag_header tag-with-trailers-and-no-message $commit commit $time >expect
-cat >>expect <<EOF
-add a line
-
-my-trailer: here
-alt-trailer: there
-EOF
-test_expect_success 'create annotated tag and force editor when only --trailer is given' '
-	GIT_EDITOR=./fakeeditor git tag --trailer my-trailer=here --trailer alt-trailer=there tag-with-trailers-and-no-message &&
+	my-trailer: here
+	alt-trailer: there
+	EOF
+	GIT_EDITOR=./fakeeditor git tag \
+		--trailer my-trailer=here \
+		--trailer alt-trailer=there \
+		tag-with-trailers-and-no-message &&
 	get_tag_msg tag-with-trailers-and-no-message >actual &&
 	test_cmp expect actual
 '
