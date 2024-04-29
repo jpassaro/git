@@ -292,7 +292,8 @@ static const char message_advice_nested_tag[] =
 static void create_tag(const struct object_id *object, const char *object_ref,
 		       const char *tag,
 		       struct strbuf *buf, struct create_tag_options *opt,
-		       struct object_id *prev, struct object_id *result, struct strvec *trailer_args, char *path)
+		       struct object_id *prev, struct object_id *result,
+		       struct strvec *trailer_args, char *path)
 {
 	enum object_type type;
 	struct strbuf header = STRBUF_INIT;
@@ -360,14 +361,14 @@ static void create_tag(const struct object_id *object, const char *object_ref,
 		if (should_edit) {
 			if (launch_editor(path, buf, NULL)) {
 				fprintf(stderr,
-				_("Please supply the message using either -m or -F option.\n"));
+					_("Please supply the message using either -m or -F option.\n"));
 				exit(1);
 			}
 		} else if (trailer_args->nr) {
 			strbuf_reset(buf);
 			if (strbuf_read_file(buf, path, 0) < 0) {
 				fprintf(stderr,
-						_("Please supply the message using either -m or -F option.\n"));
+					_("Please supply the message using either -m or -F option.\n"));
 				exit(1);
 			}
 		}
@@ -516,7 +517,8 @@ int cmd_tag(int argc, const char **argv, const char *prefix)
 		OPT_CALLBACK_F('m', "message", &msg, N_("message"),
 			       N_("tag message"), PARSE_OPT_NONEG, parse_msg_arg),
 		OPT_FILENAME('F', "file", &msgfile, N_("read message from file")),
-		OPT_CALLBACK_F(0, "trailer", &trailer_args, N_("trailer"), N_("add custom trailer(s)"), PARSE_OPT_NONEG, opt_pass_trailer),
+		OPT_CALLBACK_F(0, "trailer", &trailer_args, N_("trailer"), N_("add custom trailer(s)"),
+				PARSE_OPT_NONEG, opt_pass_trailer),
 		OPT_BOOL('e', "edit", &edit_flag, N_("force edit of tag message")),
 		OPT_BOOL('s', "sign", &opt.sign, N_("annotated and GPG-signed tag")),
 		OPT_CLEANUP(&cleanup_arg),
@@ -586,7 +588,8 @@ int cmd_tag(int argc, const char **argv, const char *prefix)
 		opt.sign = 1;
 		set_signing_key(keyid);
 	}
-	create_tag_object = (opt.sign || annotate || msg.given || msgfile || edit_flag || trailer_args.nr);
+	create_tag_object = (opt.sign || annotate || msg.given || msgfile ||
+			     edit_flag || trailer_args.nr);
 
 	if ((create_tag_object || force) && (cmdmode != 0))
 		usage_with_options(git_tag_usage, options);
@@ -691,8 +694,8 @@ int cmd_tag(int argc, const char **argv, const char *prefix)
 		if (force_sign_annotate && !annotate)
 			opt.sign = 1;
 		path = git_pathdup("TAG_EDITMSG");
-		create_tag(&object, object_ref, tag, &buf, &opt, &prev, &object, &trailer_args,
-			   path);
+		create_tag(&object, object_ref, tag, &buf, &opt, &prev, &object,
+			   &trailer_args, path);
 	}
 
 	transaction = ref_transaction_begin(&err);
