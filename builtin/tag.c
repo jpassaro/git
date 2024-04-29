@@ -28,7 +28,7 @@
 #include "date.h"
 #include "write-or-die.h"
 #include "object-file-convert.h"
-#include "run-command.h"
+#include "trailer.h"
 
 static const char * const git_tag_usage[] = {
 	N_("git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>] [-e]\n"
@@ -325,10 +325,8 @@ static void create_tag(const struct object_id *object, const char *object_ref,
 		fd = xopen(path, O_CREAT | O_TRUNC | O_WRONLY, 0600);
 
 		if (opt->message_given && buf->len) {
+			strbuf_complete(buf, '\n');
 			write_or_die(fd, buf->buf, buf->len);
-			if (trailer_args->nr && buf->buf[buf->len-1] != '\n') {
-				write_or_die(fd, "\n", 1);
-			}
 			strbuf_reset(buf);
 		} else if (!is_null_oid(prev)) {
 			write_tag_body(fd, prev);
@@ -346,17 +344,8 @@ static void create_tag(const struct object_id *object, const char *object_ref,
 		}
 		close(fd);
 
-		if (trailer_args->nr) {
-			struct child_process run_trailer = CHILD_PROCESS_INIT;
-
-			strvec_pushl(&run_trailer.args, "interpret-trailers",
-				     "--in-place", "--no-divider",
-				     path, NULL);
-			strvec_pushv(&run_trailer.args, trailer_args->v);
-			run_trailer.git_cmd = 1;
-			if (run_command(&run_trailer))
-				die(_("unable to pass trailers to --trailers"));
-		}
+		if (trailer_args->nr && amend_file_with_trailers(path, trailer_args))
+			die(_("unable to pass trailers to --trailers"));
 
 		if (should_edit) {
 			if (launch_editor(path, buf, NULL)) {

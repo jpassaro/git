@@ -3,6 +3,7 @@
 
 #include "list.h"
 #include "strbuf.h"
+#include "strvec.h"
 
 enum trailer_where {
 	WHERE_DEFAULT,
@@ -157,5 +158,12 @@ int trailer_iterator_advance(struct trailer_iterator *iter);
  * Release all resources associated with the trailer iteration.
  */
 void trailer_iterator_release(struct trailer_iterator *iter);
+
+/*
+ * Augment a file to add trailers to it by running git-interpret-trailers.
+ * This calls run_command() and its return value is the same (i.e. 0 for
+ * success, various non-zero for other errors). See run-command.h.
+ */
+int amend_file_with_trailers(const char *path, struct strvec const* trailer_args);
 
 #endif /* TRAILER_H */
